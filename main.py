@@ -418,7 +418,7 @@ def scrape_data(brands, start_page, end_page):      # Configure Edge options
     os.makedirs(output_dir, exist_ok=True)
     
     # Save the Excel file
-    output_file = os.path.join(output_dir, "scraped_data.csv")
+    output_file = os.path.join(output_dir, "scraped_data.xlsx")
     df.to_excel(output_file, index=False, engine='openpyxl')
     
     print(f"Scraped data saved to {output_file}")
@@ -427,9 +427,9 @@ def scrape_data(brands, start_page, end_page):      # Configure Edge options
 
 
 # enter the brand urls here
-brands = ["https://floorscenter.com/collections/ms-international"]
+brands = ["https://floorscenter.com/collections/marazzi"]
 
 start_page = 1
-end_page = 1
+end_page = 11
 
 scrape_data(brands, start_page, end_page)
