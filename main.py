@@ -2,6 +2,7 @@ import time
 import csv
 import uuid
 import os
+import tempfile
 import pandas as pd
 from urllib3.exceptions import ReadTimeoutError
 from selenium import webdriver
@@ -15,15 +16,17 @@ from selenium.webdriver.common.action_chains import ActionChains
 edge_options = Options()
 edge_options.add_argument("start-maximized")
 edge_options.add_experimental_option("detach", True)
+# Add a unique user-data-dir so each session uses a new profile
+temp_profile = tempfile.mkdtemp()
+edge_options.add_argument(f"--user-data-dir={temp_profile}")
 
 # Launch Edge browser
 driver = webdriver.Edge(options=edge_options)
-# Increase the page load timeout to allow extra time for slow responses
 driver.set_page_load_timeout(180)
 
 # List of product URLs to scrape
 product_urls = [
-     "https://www.olliix.com/product/data/3932/FPF18-0160?ia=0&c=21&o=3&i=1",
+  "https://www.olliix.com/product/data/3932/FPF18-0160?ia=0&c=21&o=3&i=1",
   "https://www.olliix.com/product/data/13088/MP130-0945?ia=0&c=21&o=3&i=1",
   "https://www.olliix.com/product/data/14175/MP130-1036?ia=0&c=21&o=3&i=1",
   "https://www.olliix.com/product/data/13685/II130-0406?ia=0&c=21&o=3&i=1",
@@ -54,12 +57,10 @@ cookies = [
      "domain": ".olliix.com"},
     
     {"name": "atuh.cookie2", 
-     "value": "CfDJ8Owt0b9-lC5Evmhcb8Y8-dsH9KBKaMYzClrPf2orxqOQMLdJNcbw3JLYcHUkI-kw4LkqAqyjwj4kZr0HlDk-35Wx3SgPZTSLUhYzFie5ZIhPxhoeZuxGiV-Or-FeFLb9GEABrc0xptFulw3-qwbOxN_voXib45_N8Z4iRoLxVIZZJZoSEVP5bDz183N671UwkCm5exSQlhBGKtHXPiMWZx7qE0ARZOz_1AB9L22kqpgZwTdJpBkbIun-xKLDLJGKo17pDDbhyBScA0ZFrgBtOyIf8tnBa2jh6oK9rDmovQd3Z9Gq4d6yVaDDw1eI9ZzbjkDaVCaClvP3Jg6KTyYK5Nhmjr-Mh5A08F1PTmtg1o1f-i5W8p52ue41NoEKtTBLPJj5HqJ45EMU_pYSCr1oX5avl5Vlf3cmbTjIQjIs6eeYXc8A60cvivB0wRGBtXllOv2xmPtoWVvprBRjrmYU0dshrYRPaMNo4y_mlcwF7lwXT0gW0FbPMy3Adv2I_9b2y9NoC3S0ArUqNCRE7oqeTckQr268FP52GgoNul26OknGrP-wFC8_w8Lom_OOIsnPfBUvxV7AmmR654u4Dps5oOSaqeFla05YgQFWdLfYPN1jWoO5NC9oLVfHwJ1rOFt7_go9P2DTvUbxAfSy7gy8tfsgQ2oxcbIIdV6D3kDrJVo3npmSHGcAC-9FFx25cZFX3YcvOHQY7H1TeXhygRzHaboFDog7BCICn6Op4k6Sm_FtXcDkSbrIQeDXcpRVWGQM56p6N51TrIsWWhIYR-QTCLjS45oAnfw03LZCB2VnXuZoZchIAtLr4YbS_5p9UdaIgYcqldZ8MAHjXEti6PpTWvJmSyzdE-JLJsHHtnqH3n3i826wSX0vko_l2D03SbD_lTe--w7jmK88tngMvM-rbyGr8ONaFpSQfU8WcrSyHiTs1YqLUqotYLEW0LzcPVpc5Dsmq4L7gDANPjB0MEfugIiMC6pimjN38NcEYmoTDPF---462K8eufVeXAQ5PxT6btjkJDhW3vksEMDypWn49lhO6oHFY6PS_rmwoUfa3t2UO9gATGf5HJ204vjNSLSP9eg579h1IbAxn5RMzRzumMQSvKMu6nZJkCJzR9fk554X4uFePvNlvMBElcF0JC0vTnOIJSY1GwhMAqvyEEJriCPp_I2gyJP5CyF2dGfMRTQUrDH4JmdbcgJbVrCgJENWGtQzeBx2QAwWbs28z8OC_KyQHMBEMa2WI6iQ08lbifb7OQf2D_8ePybxNM_w_9djdiRsVC279FJVQSG8_iqozGAtVyJEc2FCqrjFqwEf-8gXPBFd8EAAKdlCHUsa0OKvvXPMbT4ORJgFaf7q7v2A7kZgaYu0mseI6caNZAkL9ZQDnEV7beFEFj0Yot7D2rjIKYG5gt5k7Wbwlr_Mr0CW1SqeHI_rzfMTYV2ejSE5eKYvJ1G9tzRR4cAkKMGxbT--gVKrvV_Jv3KpZotdQ3G0cxkH1Aijs3N8SgLPRwFN6cJ0xfzbSpCMbjJ6ARM3T79T6k_dQmMcsr1qABC2YLbl1XxoOn4OaV997a-MOFQXdyxjKva8sz2nZ_14Ha4LzI7hLNmkgbCGkqBgR8KmkTxt5UwNg2mbd1CpP7OrUK60kl6PGdPtEaD1q9GAQeLYPznTRKOpFA0yclWiIojtTTfOB-NrylwANKOY-Iw687bG1ChWYy5qt4RktpbHaXgVQaBjZVuhR0GNc_N_qxu7PT0oxBL__qELHxtpei7NEtYRCuRopD802vhsaQA0mh8OeIYmHOAuxkDhDxrgxv695KMhO1EbYPgqlrird5lKcgcIciAl9tFBOqsemTVr9Xs5XvrcaZk26bng-6j_ZK22hFrtTHYfh_xZNSOPhj9PJXj7lD1M9QY9GUxfh2DJJCDkRgXqOv8vAguB_oJplPwSIeJzxl20wMDku8RbVXEkXisIrNOoHi9FMJRNufE2Sy_-gmLL5K6zvlvvQUsGM1ubFEzmBNR2aelSC-vGyE7MYMq_6VP6dvTFEH2sjdoyPL8xX0jf5HUO6uaafVE5ZM-jSKUpSTBSaWrEyCZHc4YfOfAt-x1dAkbODHdemrT9AMQmmsWkBA4XkbDv4TNJvyjWjPQroB3vaUdkbWMbmDy5Z2NgocKJcAXkKdOPbyiUD0n5CKhdNcLWthfZubYcbM1DqFav1eo",
-     "domain": ".olliix.com"}
+     "value": "CfDJ8Owt0b9-lC5Evmhcb8Y8-dsH9KBKaMYzClrPf2orxqOQMLdJNcbw3JLYcHUkI-kw4LkqAqyjwj4kZr0HlDk-35Wx3SgPZTSLUhYzFie5ZIhPxhoeZuxGiV-Or-FeFLb9GEABrc0xptFulw3-qwbOxN_voXib45_N8Z4iRoLxVIZZJZoSEVP5bDz183N671UwkCm5exSQlhBGKtHXPiMWZx7qE0ARZOz_1AB9L22kqpgZwTdJpBkbIun-xKLDLJGKo17pDDbhyBScA0ZFrgBtOyIf8tnBa2jh6oK9rDmovQd3Z9Gq4d6yVaDDw1eI9ZzbjkDaVCaClvP3Jg6KTyYK5Nhmjr-Mh5A08F1PTmtg1o1f-i5W8p52ue41NoEKtTBLPJj5HqJ45EMU_pYSCr1oX5avl5Vlf3cmbTjIQjIs6eeYXc8A60cvivB0wRGBtXllOv2xmPtoWVvprBRjrmYU0dshrYRPaMNo4y_mlcwF7lwXT0gW0FbPMy3Adv2I_9b2y9NoC3S0ArUqNCRE7oqeTckQr268FP52GgoNul26OknGrP-wFC8_w8Lom_OOIsnPfBUvxV7AmmR654u4Dps5oOSaqeFla05YgQFWdLfYPN1jWoO5NC9oLVfHwJ1rOFt7_go9P2DTvUbxAfSy7gy8tfsgQ2oxcbIIdV6D3kDrJVo3npmSHGcAC-9FFx25cZFX3YcvOHQY7H1TeXhygRzHaboFDog7BCICn6Op4k6Sm_FtXcDkSbrIQeDXcpRVWGQM56p6N51TrIsWWhIYR-QTCLjS45oAnfw03LZCB2VnXuZoZchIAtLr4YbS_5p9UdaIgYcqldZ8MAHjXEti6PpTWvJmSyzdE-JLJsHHtnqH3n3i826wSX0vko_l2D03SbD_lTe--w7jmK88tngMvM-rbyGr8ONaFpSQfU8WcrSyHiTs1YqLUqotYLEW0LzcPVpc5Dsmq4L7gDANPjB0MEfugIiMC6pimjN38NcEYmoTDPF---462K8eufVeXAQ5PxT6btjkJDhW3vksEMDypWn49lhO6oHFY6PS_rmwoUfa3t2UO9gATGf5HJ204vjNSLSP9eg579h1IbAxn5RMzRzumMQSvKMu6nZJkCJzR9fk554X4uFePvNlvMBElcF0JC0vTnOIJSY1GwhMAqvyEEJriCPp_I2gyJP5CyF2dGfMRTQUrDH4JmdbcgJbVrCgJENWGtQzeBx2QAwWbs28z8OC_KyQHMBEMa2WI6iQ08lbifb7OQf2D_8ePybxNM_w_9djdiRsVC279FJVQSG8_iqozGAtVyJEc2FCqrjFqwEf-8gXPBFd8EAAKdlCHUsa0OKvvXPMbT4ORJgFaf7q7v2A7kZgaYu0mseI6caNZAkL9ZQDnEV7beFEFj0Yot7D2rjIKYG5gt5k7Wbwlr_Mr0CW1SqeHI_rzfMTYV2ejSE5eKYvJ1G9tzRR4cAkKMGxbT--gVKrvV_Jv3KpZotdQ3G0cxkH1Aijs3N8SgLPRwFN6cJ0xfzbSpCMbjJ6ARM3T79T6k_dQmMcsr1qABC2YLbl1XxoOn4OaV997a-MOFQXdyxjKva8sz2nZ_14Ha4LzI7hLNmkgbCGkqBgR8KmkTxt5UwNg2mbd1CpP7OrUK60kl6PGdPtEaD1q9GAQeLYPznTRKOpFA0yclWiIojtTTfOB-NrylwANKOY-Iw687bG1ChWYy5qt4RktpbHaXgVQaBjZVuhR0GNc_N_qxu7PT0oxBL__qELHxtpei7NEtYRCuRopD802vhsaQA0mh8OeIYmHOAuxkDhDxrgxv695KMhO1EbYPgqlrird5lKcgcIciAl9tFBOqsemTVr9Xs5XvrcaZk26bng-6j_ZK22hFrtTHYfh_xZNSOPhj9PJXj7lD1M9QY9GUxfh2DJJCDkRgXqOv8vAguB_oJplPwSIeJzxl20wMDku8RbVXEkXisIrNOoHi9FMJRNufE2Sy_-gmLL5K6zvlvvQUsGM1ubFEzmBNR2aelSC-vGyE7MYMq_6VP6dvTFEH2sjdoyPL8xX0jf5HUO6uaafVE5ZM-jSKUpSTBSaWrEyCZHc4YfOfAt-x1dAkbODHdemrT9AMQmmsWkBA4XkbDv4TNJvyjWjPQroB3vaUdkbWMbmDy5Z2NgocKJcAXkKdOPbyiUD0n5CKhdNcLWthfZubYcbM1DqFav1eo"}
 ]
 
 driver.get("https://www.olliix.com")
-
 for cookie in cookies:
     driver.add_cookie(cookie)
     print("Cookie set:", cookie["name"])
@@ -160,9 +161,7 @@ with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
                 variant_upc = f"'{variant_upc}"
             except Exception:
                 variant_upc = ""
-
             print(f"UPC: {variant_upc}")
-
 
             try:
                 pack_qty_element = driver.find_element(
@@ -635,8 +634,6 @@ driver.quit()
 print(f"Data successfully saved in {csv_filename}")
 
 # ---- New code to convert CSV output to Excel for GitHub artifacts ----
-
-# Create output folder if it doesn't exist
 output_dir = "output"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
